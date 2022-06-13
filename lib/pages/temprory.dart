@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kelimekartlari/pages/main.dart';
 
@@ -9,15 +11,31 @@ class TemproryPage extends StatefulWidget {
 class _TemproryPageState extends State<TemproryPage> {
   @override
   void initState() {
-    // Bir sınıf çalıştığında ilk çalışan fonksiyondur.
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) =>
                   MainPage())); // Bir önceki sayfayı ilmek için pushreplacement.
     });
+    setFirebase();
+  }
+
+  void setFirebase() async {
+    await Firebase.initializeApp();
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
   }
 
   @override
@@ -34,7 +52,8 @@ class _TemproryPageState extends State<TemproryPage> {
                   children: [
                     Image.asset("assets/imagers/logo.jpg"),
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(
+                          10.0), //tüm kenarlardan aynı uzaklıkta vermek için.
                       child: Text(
                         "KELIME KARTLARIM",
                         style: TextStyle(

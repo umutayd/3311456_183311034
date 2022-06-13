@@ -155,8 +155,9 @@ class _CreateListState extends State<CreateList> {
         String eng = wordTextEditingList[2 * i].text;
         String tr = wordTextEditingList[2 * i + 1].text;
 
-        if (!eng.isEmpty && !tr.isEmpty) {
-          counter++;
+        if (!eng.isEmpty && !tr.isEmpty) // isEmpty dizi boşsa true döndürür.
+        {
+          counter++; //doluları saymak için.
         } else {
           notEmptyPair = true;
         }
@@ -190,7 +191,8 @@ class _CreateListState extends State<CreateList> {
           toastMessage("Liste oluşturuldu.");
           _listName.clear();
           wordTextEditingList.forEach((element) {
-            element.clear();
+            element
+                .clear(); // element çok kez yeniden kullanıma izin verir. Ağaç yapısı
           });
         } else {
           toastMessage("Boş alanları doldurun veya silin.");
@@ -209,7 +211,7 @@ class _CreateListState extends State<CreateList> {
       wordTextEditingList.removeAt(wordTextEditingList.length - 1);
 
       wordListField.removeAt(wordListField.length - 1);
-      setState(() => wordListField);
+      setState(() => wordListField); //state'in değiştiğini bildiriyoruz.
     } else {
       toastMessage("Minimum 4 çift gereklidir.");
     }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "149471644488",
+    "project_id": "deneme-47295",
+    "storage_bucket": "deneme-47295.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149471644488:android:5cbddecc60df52bd23417d",
+        "android_client_info": {
+          "package_name": "com.umutaydn.kelimekartlari"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "149471644488-ohshbm4bri2s860tfsg4f56u9nucn6ue.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfxgdCQDAXPzrZcKbfWC6B0h3GU--6_Zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "149471644488-ohshbm4bri2s860tfsg4f56u9nucn6ue.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

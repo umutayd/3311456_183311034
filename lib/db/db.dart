@@ -1,32 +1,33 @@
 import 'package:kelimekartlari/models/list.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart'; //join parametresi için.
 import 'package:sqflite/sqflite.dart';
 
 import '../models/words.dart';
 
 class DB {
-  // Singleton
-  // setter ve getter
-
   static final DB instance = DB._init();
   static Database? _database;
 
   DB._init();
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
-
+    //getter kullanıldı çünkü database nesnesi private.
+    if (_database != null)
+      return _database!; //bir sınıftan yalnızca bir adet nesne yaratılması için.
+    // Singleton sınıfa dair işlemlere herhangi bir başka sınıf tarafından erişilebilir ancak yeni bir nesne yaratılmasının da aynı zamanda önüne geçilmiş olur.
     _database = await _initDB('kelimekartlari.db');
     return _database!;
   }
 
   Future<Database> _initDB(String filePath) async {
-    final path = join(await getDatabasesPath(), filePath);
+    final path = join(await getDatabasesPath(),
+        filePath); //veritabanı telefonda nerede bulunsun. yolu verdi.
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
-    final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    final idType =
+        'INTEGER PRIMARY KEY AUTOINCREMENT'; //veri tabanına veri ekledikçe artacak.
     final boolType = 'BOOLEAN NOT NULL';
     final integerType = 'INTEGER NOT NULL';
     final textType = 'TEXT NOT NULL';
@@ -48,6 +49,7 @@ class DB {
      FOREIGN KEY(${WordTableFields.list_id}) REFERENCES  $tableNameLists (${ListsTableFields.id}))
      ''');
   }
+  //liste oluştur methodu, listeye kelime ekle, listeye göre kelime listesini getir, tüm listeleri getir >>
 
   Future<Lists> insertList(Lists lists) async {
     final db = await instance.database;
@@ -64,13 +66,15 @@ class DB {
 
   Future<List<Word>> readWordByList(int? listID) async {
     final db = await instance.database;
-    final orderBy = '${WordTableFields.id} ASC';
+    final orderBy = '${WordTableFields.id} ASC'; //id'ye göre sıralama
     final result = await db.query(tableNameWords,
         orderBy: orderBy,
         where: '${WordTableFields.list_id} = ?',
         whereArgs: [listID]);
 
-    return result.map((json) => Word.fromJson(json)).toList();
+    return result
+        .map((json) => Word.fromJson(json))
+        .toList(); //resulta gelen kelimeleri list word tipinde dönme
   }
 
   Future<List<Map<String, Object?>>> readListsAll() async {
@@ -83,7 +87,7 @@ class DB {
     await Future.forEach(lists, (element) async {
       element = element as Map;
 
-      var wordInfoByList = await db.rawQuery(
+      var wordInfoByList = await db.rawQuery(//yapısal bir arayüz
           "SELECT(SELECT COUNT(*) FROM words where list_id=${element['id']}) as sum_word,"
           "(SELECT COUNT(*) FROM words where status=0 and list_id=${element['id']}) as sum_unlearned");
       Map<String, Object?> temp = Map.of(wordInfoByList[0]);
@@ -143,6 +147,7 @@ class DB {
         where: '${WordTableFields.id} = ?', whereArgs: [id]);
   }
 
+//öğrenildi işareti için>>
   Future<int> markAsLearned(bool mark, int id) async {
     final db = await instance.database;
     int result = mark == true ? 1 : 0;
@@ -150,6 +155,7 @@ class DB {
         where: '${WordTableFields.id} = ?', whereArgs: [id]);
   }
 
+  //liste altındaki kelimleri sil>>
   Future<int> deleteListsAndWordByList(int id) async {
     final db = await instance.database;
 
@@ -163,6 +169,7 @@ class DB {
     return result;
   }
 
+// bağlantıyı kapat>>
   Future close() async {
     final db = await instance.database;
     db.close();

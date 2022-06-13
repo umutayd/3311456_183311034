@@ -1,4 +1,5 @@
-final String tableNameWords = "words";
+final String tableNameWords =
+    "words"; //tablo adını değişkene atadım. Sürekli yazmamak için.
 
 class WordTableFields {
   static final List<String> values = [id, list_id, word_ing, word_tr, status];
@@ -31,6 +32,7 @@ class Word {
       String? word_tr,
       bool? status}) {
     return Word(
+      // geriye dönüş tipi method olmalı.
       id: id ?? this.id,
       list_id: list_id ?? this.list_id,
       word_ing: word_ing ?? this.word_ing,

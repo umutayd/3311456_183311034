@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:kelimekartlari/global_degisken.dart';
 import 'package:kelimekartlari/hazirmethodlar.dart';
 import 'package:kelimekartlari/pages/list.dart';
+import 'package:kelimekartlari/pages/multiple_choice.dart';
+import 'package:kelimekartlari/pages/word_cards.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({Key? key}) : super(key: key); //ilki isim, ikincisi ad.
 
   @override
   _MainPageState createState() => _MainPageState();
 }
 
-enum Lang { ing, tr }
-const String _url = 'https://github.com';
+const String _url = 'https://github.com/umutayd';
 
 class _MainPageState extends State<MainPage> {
-  Lang? _chooseLang = Lang.ing;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+      GlobalKey<ScaffoldState>(); //drawer menüsü için verilmiştir.
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +84,8 @@ class _MainPageState extends State<MainPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading:
+              false, //leading otomatik olarak oluşturulmaz.
           backgroundColor: Colors.white,
           elevation: 0,
           title: Row(
@@ -111,28 +114,11 @@ class _MainPageState extends State<MainPage> {
             child: Column(
               children: [
                 langRadioButton(
-                    //extract method denenmiştir
-                    text: "ENG - TR",
-                    group: _chooseLang,
-                    value: Lang.tr),
-                SizedBox(
-                  width: 150,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.all(0),
-                    title: Text(
-                      "TR - ENG",
-                      style: TextStyle(fontFamily: "Fresh"),
-                    ),
-                    leading: Radio<Lang>(
-                      value: Lang.ing,
-                      groupValue: _chooseLang,
-                      onChanged: (Lang? value) {
-                        setState(() {
-                          _chooseLang = value;
-                        });
-                      },
-                    ),
-                  ),
+                    text: "ENG - TR", group: chooseLang, value: Lang.ing),
+                langRadioButton(
+                    text: "TR - ENG", group: chooseLang, value: Lang.tr),
+                const SizedBox(
+                  height: 25,
                 ),
                 InkWell(
                   onTap: () {
@@ -179,11 +165,22 @@ class _MainPageState extends State<MainPage> {
                       card(context,
                           startColor: "#20AD7D",
                           endColor: "#7D20AD",
-                          title: "Kelime\nKarlari"),
+                          title: "Kelime\nKartlari", click: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const WordCardsPage()));
+                      }),
                       card(context,
                           startColor: "#20AD7D",
                           endColor: "#7D20AD",
-                          title: "Coktan\nSecmeli"),
+                          title: "Coktan\nSecmeli", click: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const MultipleChoicePage()));
+                      }),
                     ],
                   ),
                 )
@@ -195,43 +192,47 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Container card(BuildContext context,
+  InkWell card(BuildContext context,
       {@required String? startColor,
       @required String? endColor,
-      @required String? title}) {
-    return Container(
-      alignment: Alignment.center,
-      height: 200,
-      width: MediaQuery.of(context).size.width * 0.35,
-      //her cihaz için boyutlandırma mediaQuery
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          // 10% of the width, so there are ten blinds.
-          colors: <Color>[
-            Color(
-              HazirMethodlar.HexaColorConverter(startColor!),
-            ),
-            Color(HazirMethodlar.HexaColorConverter(endColor!)),
-          ], // red to yellow
-          tileMode: TileMode.repeated, // repeats the gradient over the canvas
-        ),
-      ),
-
-      // borderRadius= kutucuğa kıvrım sağlıyor
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Text(
-            title!,
-            style: TextStyle(
-                fontSize: 30, fontFamily: "Fresh", color: Colors.white),
-            textAlign: TextAlign.center,
+      @required String? title,
+      @required Function? click}) {
+    return InkWell(
+      onTap: () => click!(),
+      child: Container(
+        alignment: Alignment.center,
+        height: 200,
+        width: MediaQuery.of(context).size.width * 0.37,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            // 10% of the width, so there are ten blinds.
+            colors: <Color>[
+              Color(HazirMethodlar.HexaColorConverter(startColor!)),
+              Color(HazirMethodlar.HexaColorConverter(endColor!)),
+            ],
+            // red to yellow
+            tileMode: TileMode.repeated, // repeats the gradient over the canvas
           ),
-          Icon(Icons.file_copy_rounded, size: 32, color: Colors.white),
-        ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              title!,
+              style: const TextStyle(
+                  fontSize: 28, fontFamily: "Carter", color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            const Icon(
+              Icons.file_copy,
+              size: 32,
+              color: Colors.white,
+            )
+          ],
+        ),
       ),
     );
   }
@@ -239,9 +240,7 @@ class _MainPageState extends State<MainPage> {
   SizedBox langRadioButton({
     @required String? text,
     @required Lang? value,
-    @required
-        Lang?
-            group, //null safety(boş güvenliği) ne olursa olsun bunları gönder.
+    @required Lang? group,
   }) {
     return SizedBox(
       width: 150, //ekranı ortalamak için.
@@ -256,11 +255,11 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
         leading: Radio<Lang>(
-          value: Lang.tr,
-          groupValue: _chooseLang,
+          value: value!,
+          groupValue: chooseLang,
           onChanged: (Lang? value) {
             setState(() {
-              _chooseLang = value;
+              chooseLang = value;
             });
           },
         ),
